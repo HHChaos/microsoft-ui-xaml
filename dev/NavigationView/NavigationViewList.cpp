@@ -44,7 +44,6 @@ void NavigationViewList::ClearContainerForItemOverride(winrt::DependencyObject c
         auto itemContainerImplementation = winrt::get_self<NavigationViewItem>(itemContainer);
         itemContainerImplementation->ClearIsContentChangeHandlingDelayedForTopNavFlag();
         itemContainerImplementation->SetDepth(0);
-        itemContainerImplementation->SetParentItem(nullptr);
     }
     __super::PrepareContainerForItemOverride(element, item);
 }
@@ -54,22 +53,14 @@ void NavigationViewList::PrepareContainerForItemOverride(winrt::DependencyObject
     if (auto itemContainer = element.try_as<winrt::NavigationViewItemBase>())
     {
         winrt::get_self<NavigationViewItemBase>(itemContainer)->Position(m_navigationViewListPosition);
+        
+        auto nvNode = NodeFromContainer(itemContainer);
+        winrt::get_self<NavigationViewItemBase>(itemContainer)->SetDepth(nvNode.Depth());
     }
     if (auto itemContainer = element.try_as<winrt::NavigationViewItem>())
     {
         itemContainer.UseSystemFocusVisuals(m_showFocusVisual);
         winrt::get_self<NavigationViewItem>(itemContainer)->ClearIsContentChangeHandlingDelayedForTopNavFlag();
-
-        //Update Item depth and set item parent
-        auto navigationView = GetNavigationViewParent();
-        auto lastExpandedNavItem = winrt::get_self<NavigationView>(navigationView)->GetLastExpandedItem();
-        if (lastExpandedNavItem)
-        {
-            winrt::get_self<NavigationViewItem>(itemContainer)->SetParentItem(lastExpandedNavItem);
-
-            auto depth = winrt::get_self<NavigationViewItem>(lastExpandedNavItem)->GetDepth();
-            winrt::get_self<NavigationViewItem>(itemContainer)->SetDepth(depth + 1);
-        }
     }
     __super::PrepareContainerForItemOverride(element, item);
 }

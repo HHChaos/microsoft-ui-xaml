@@ -16,6 +16,11 @@
     </Page.Resources>
 
     <Grid>
-        <muxcontrols:NavigationView MenuItemsSource="{x:Bind categories}" MenuItemTemplate="{StaticResource NavigationViewMenuItem}"/>
+        <muxcontrols:NavigationView x:Name="navview" MenuItemsSource="{x:Bind categories}" MenuItemTemplate="{StaticResource NavigationViewMenuItem}" ItemInvoked="{x:Bind ClickedItem}">
+            <Grid>
+                <TextBlock x:Name="SelectedItemLabel" Text="uninitialized"/>
+                <Button Content="Get Selected Item Label" Click="PrintSelectedItem"/>
+            </Grid>
+        </muxcontrols:NavigationView>
     </Grid>
 </Page>

@@ -13,6 +13,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using mux = Microsoft.UI.Xaml.Controls;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -41,6 +42,7 @@ namespace MUXControlsTestApp
     {
 
         ObservableCollection<Category> categories = new ObservableCollection<Category>();
+        int test = 0;
 
         public HierarchicalNavigationViewDataBinding()
         {
@@ -57,6 +59,24 @@ namespace MUXControlsTestApp
             categories.Add(new Category("Menu Item E", "Icon", null));
             categories.Add(new Category("Menu Item F", "Icon", null));
 
+        }
+
+        private void ClickedItem(object sender, mux.NavigationViewItemInvokedEventArgs e)
+        {
+            var clickedItem = e.InvokedItem;
+            var clickedItemContainer = e.InvokedItemContainer;
+            //clickedItemContainer.Content = "I was clicked: " + test;
+            test++;
+        }
+
+        private void PrintSelectedItem(object sender, RoutedEventArgs e)
+        {
+            var selectedItem = navview.SelectedItem;
+            if(selectedItem != null)
+            {
+                var label = ((Category)selectedItem).Name;
+                SelectedItemLabel.Text = label;
+            }
         }
     }
 }

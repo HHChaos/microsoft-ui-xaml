@@ -1358,11 +1358,23 @@ void NavigationView::OnItemClick(const winrt::IInspectable& /*sender*/, const wi
 
     auto selectedItem = SelectedItem();
 
+    // TODO: There is bug in the above method of retrieving an item container when using databinding.
+    //       For now, retrieving container by bypass the buggy method.
+    // Explanation:
+    //      The container retrieval workaround in 'GetContainerForClickedItem' does not work in a
+    //      databinding scenario. 'NavigationVieItemBaseOrSettingsContentFromData' doesn't work
+    //      in this function in a markup scenario. So we first try the ListView API to retrieve
+    //      a container and if that fails, we use the workaround.
+    auto itemContainerForExpanding = NavigationViewItemBaseOrSettingsContentFromData(clickedItem);
+    if (!itemContainerForExpanding)
+    {
+        itemContainerForExpanding = itemContainer;
+    }
     // We want to expand/collapse items with children regardless of selection logic.
     // In order to determine if the item has children, we need access to the item's container.
-    if (itemContainer)
+    if (itemContainerForExpanding)
     {
-        if (auto clickedItemContainer = itemContainer.try_as<winrt::NavigationViewItem>())
+        if (auto clickedItemContainer = itemContainerForExpanding.try_as<winrt::NavigationViewItem>())
         {
             bool hasChildren = (clickedItemContainer.MenuItems().Size() > 0 ||
                                 clickedItemContainer.MenuItemsSource() ||
@@ -1395,6 +1407,7 @@ void NavigationView::OnItemClick(const winrt::IInspectable& /*sender*/, const wi
     // If selecteditem.content == item, selecteditem is used to deduce the selectionsuppressed flag
     if (!m_shouldIgnoreNextSelectionChange && DoesSelectedItemContainContent(clickedItem, itemContainer) && !IsSelectionSuppressed(selectedItem))
     {
+        auto containterContent = itemContainer.Content();
         RaiseItemInvoked(selectedItem, false /*isSettings*/, itemContainer);
     }
 }
@@ -1863,7 +1876,18 @@ winrt::NavigationViewItemBase NavigationView::GetContainerForClickedItem(winrt::
         container = listView.ContainerFromItem(itemData).try_as<winrt::NavigationViewItemBase>();
     }
 
-    MUX_ASSERT(container && container.Content() == itemData);
+    if (auto navListView = listView.try_as<winrt::NavigationViewList>())
+    {
+        auto index = navListView.IndexFromContainer(container);
+        if (container.Content() != itemData)
+        {
+            auto containerContent = container.Content();
+            int j = 0;
+            j++;
+        }
+    }
+
+    MUX_ASSERT(container);
     return container;
 }
 

@@ -54,8 +54,6 @@ public:
 
     void UpdateItemDepth(int depth);
 
-    void SetParentItem(winrt::NavigationViewItem const& item);
-
     winrt::TreeViewNode TreeNode();
 
 private:
@@ -98,6 +96,4 @@ private:
     bool m_appliedTemplate{ false };
     bool m_hasKeyboardFocus{ false };
     bool m_isContentChangeHandlingDelayedForTopNav{ false };
-
-    tracker_ref<winrt::NavigationViewItem> m_parentItem{ this };
 };

@@ -422,8 +422,3 @@ void NavigationViewItem::OnLostFocus(winrt::RoutedEventArgs const& e)
         UpdateVisualStateNoTransition();
     }
 }
-
-void NavigationViewItem::SetParentItem(winrt::NavigationViewItem const& item)
-{
-    m_parentItem.set(item);
-}

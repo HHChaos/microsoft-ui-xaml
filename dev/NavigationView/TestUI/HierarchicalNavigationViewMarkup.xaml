@@ -10,7 +10,7 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid>
-        <muxcontrols:NavigationView x:Name="navView">
+        <muxcontrols:NavigationView x:Name="navView" ItemInvoked="{x:Bind ClickedItem}">
             <muxcontrols:NavigationView.MenuItems>
                 <muxcontrols:NavigationViewItem Content="Menu Item A" Icon="Home" x:Name="A">
                     <muxcontrols:NavigationViewItem.MenuItems>
