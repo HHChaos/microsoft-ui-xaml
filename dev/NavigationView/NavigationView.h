@@ -346,12 +346,16 @@ private:
 
     TopNavigationViewDataProvider m_topDataProvider{ this };
 
-    tracker_ref<winrt::NavigationViewItem> m_lastExpandedItem{ this };
-
     tracker_ref<winrt::TreeViewNode> m_rootNode{ this };
 
-    void SyncRootNodesWithItemsSource(const winrt::IInspectable& items);
     winrt::IVector<winrt::TreeViewNode> RootNodes();
+
+    void SyncRootNodesWithItemsSource(const winrt::IInspectable& items);
+
+    winrt::TreeViewNode NodeFromContainer(winrt::DependencyObject const& container);
+    winrt::DependencyObject ContainerFromNode(winrt::TreeViewNode const& node);
+
+    void ChangeIsChildSelectedForNode(winrt::TreeViewNode const& node, bool const selected);
 
     bool m_appliedTemplate{ false };
 

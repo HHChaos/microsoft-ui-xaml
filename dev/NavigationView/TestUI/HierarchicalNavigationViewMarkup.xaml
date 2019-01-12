@@ -10,11 +10,11 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid>
-        <muxcontrols:NavigationView x:Name="navView" ItemInvoked="{x:Bind ClickedItem}">
+        <muxcontrols:NavigationView x:Name="navview" ItemInvoked="{x:Bind ClickedItem}">
             <muxcontrols:NavigationView.MenuItems>
-                <muxcontrols:NavigationViewItem Content="Menu Item A" Icon="Home" x:Name="A">
+                <muxcontrols:NavigationViewItem Content="Menu Item A" Icon="Home" x:Name="A" SelectsOnInvoked="False">
                     <muxcontrols:NavigationViewItem.MenuItems>
-                        <muxcontrols:NavigationViewItem Content="Menu Item B" Icon="Save" x:Name="B">
+                        <muxcontrols:NavigationViewItem Content="Menu Item B" Icon="Save" x:Name="B" SelectsOnInvoked="False">
                             <muxcontrols:NavigationViewItem.MenuItems>
                                 <muxcontrols:NavigationViewItem Content="Menu Item C" Icon="Paste" x:Name="C" />
                                 <muxcontrols:NavigationViewItem Content="Menu Item D" Icon="Cut" x:Name="D" />
@@ -25,6 +25,12 @@
                 <muxcontrols:NavigationViewItem Content="Menu Item E" Icon="Home" x:Name="E"/>
                 <muxcontrols:NavigationViewItem Content="Menu Item F" Icon="Home" x:Name="F"/>
             </muxcontrols:NavigationView.MenuItems>
+            <StackPanel>
+                <TextBlock x:Name="SelectedItemLabel" Text="uninitialized"/>
+                <Button Content="Get Selected Item Label" Click="PrintSelectedItem"/>
+                <Button Content="Collapse Selected Item" Click="CollapseSelectedItem" Margin="10,10,0,0"/>
+                <Button Content="Remove Second MenuItem" Click="RemoveSecondMenuItem" Margin="10,10,0,0"/>
+            </StackPanel>
         </muxcontrols:NavigationView>
 
     </Grid>

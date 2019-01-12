@@ -1347,6 +1347,13 @@ void NavigationView::ChangeSelection(const winrt::IInspectable& prevItem, const 
             }
         }
     }
+    else
+    {
+        auto testitem = m_leftNavListView.get().SelectedItem();
+        auto testindex = m_leftNavListView.get().SelectedIndex();
+        auto i = 0;
+        i++;
+    }
 }
 
 void NavigationView::OnItemClick(const winrt::IInspectable& /*sender*/, const winrt::ItemClickEventArgs& args)
@@ -1362,7 +1369,7 @@ void NavigationView::OnItemClick(const winrt::IInspectable& /*sender*/, const wi
     //       For now, retrieving container by bypass the buggy method.
     // Explanation:
     //      The container retrieval workaround in 'GetContainerForClickedItem' does not work in a
-    //      databinding scenario. 'NavigationVieItemBaseOrSettingsContentFromData' doesn't work
+    //      databinding scenario. 'NavigationViewItemBaseOrSettingsContentFromData' doesn't work
     //      in this function in a markup scenario. So we first try the ListView API to retrieve
     //      a container and if that fails, we use the workaround.
     auto itemContainerForExpanding = NavigationViewItemBaseOrSettingsContentFromData(clickedItem);
@@ -1385,7 +1392,6 @@ void NavigationView::OnItemClick(const winrt::IInspectable& /*sender*/, const wi
                 if (isItemBeingExpanded)
                 {
                     RaiseIsExpanding(clickedItemContainer);
-                    m_lastExpandedItem.set(clickedItemContainer);
                 }
                 
                 clickedItemContainer.IsExpanded(isItemBeingExpanded);
@@ -1393,7 +1399,6 @@ void NavigationView::OnItemClick(const winrt::IInspectable& /*sender*/, const wi
                 if (!isItemBeingExpanded)
                 {
                     RaiseCollapsed(clickedItemContainer);
-                    m_lastExpandedItem.set(nullptr);
                 }
             }
         }
@@ -2009,8 +2014,26 @@ void NavigationView::ChangeSelectStatusForItem(winrt::IInspectable const& item, 
         // Instead we remove IsSelected from the item itself, and it make ListView to unselect it.
         // If we select an item, we follow the unselect to simplify the code.
         container.IsSelected(selected);
+
+        // Update the 'IsChildSelected' property of all parents
+        //auto node = NodeFromContainer(container);
+        //while (auto nodeParent = node.Parent())
+        //{
+        //    ChangeIsChildSelectedForNode(nodeParent, selected);
+        //    node = nodeParent;
+        //}
     }
  }
+
+void NavigationView::ChangeIsChildSelectedForNode(winrt::TreeViewNode const& node, bool const selected)
+{
+    winrt::get_self<TreeViewNode>(node)->IsChildSelected(selected);
+    auto container = ContainerFromNode(node);
+    if (auto navViewItem = container.try_as<winrt::NavigationViewItem>())
+    {
+        navViewItem.IsChildSelected(selected);
+    }
+}
 
 bool NavigationView::IsSettingsItem(winrt::IInspectable const& item)
 {
@@ -3426,7 +3449,28 @@ void NavigationView::Collapse(winrt::NavigationViewItem const& value)
 
 }
 
-winrt::NavigationViewItem NavigationView::GetLastExpandedItem()
+winrt::TreeViewNode NavigationView::NodeFromContainer(winrt::DependencyObject const& container)
 {
-    return m_lastExpandedItem.get();
+    //TODO: Update to work with Overflow Popup
+    if (auto lv = IsTopNavigationView() ? m_topNavListView.get() : m_leftNavListView.get())
+    {
+        if (auto navListView = lv.try_as<winrt::NavigationViewList>())
+        {
+            return winrt::get_self<NavigationViewList>(navListView)->NodeFromContainer(container);
+        }
+    }
+    return nullptr;
+}
+
+winrt::DependencyObject NavigationView::ContainerFromNode(winrt::TreeViewNode const& node)
+{
+    //TODO: Update to work with Overflow Popup
+    if (auto lv = IsTopNavigationView() ? m_topNavListView.get() : m_leftNavListView.get())
+    {
+        if (auto navListView = lv.try_as<winrt::NavigationViewList>())
+        {
+            return winrt::get_self<NavigationViewList>(navListView)->ContainerFromNode(node);
+        }
+    }
+    return nullptr;
 }

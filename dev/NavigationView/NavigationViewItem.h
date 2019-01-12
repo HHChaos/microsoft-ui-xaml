@@ -96,4 +96,8 @@ private:
     bool m_appliedTemplate{ false };
     bool m_hasKeyboardFocus{ false };
     bool m_isContentChangeHandlingDelayedForTopNav{ false };
+
+    void ToggleIsExpanded(winrt::TreeViewNode node);
+    void VerifyOrCreateChildrenNodes(winrt::TreeViewNode node);
+    void UpdateSelectionIndicatorVisiblity();
 };

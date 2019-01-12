@@ -78,5 +78,15 @@ namespace MUXControlsTestApp
                 SelectedItemLabel.Text = label;
             }
         }
+
+        private void AddMenuItem(object sender, RoutedEventArgs e)
+        {
+            categories.Add(new Category("Menu Item G", "Icon", null));
+        }
+
+        private void RemoveSecondMenuItem(object sender, RoutedEventArgs e)
+        {
+            categories.RemoveAt(1);
+        }
     }
 }

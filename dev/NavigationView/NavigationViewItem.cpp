@@ -176,14 +176,8 @@ void NavigationViewItem::OnPropertyChanged(const winrt::DependencyPropertyChange
     {
         if (property == s_IsExpandedProperty)
         {
-            winrt::TreeViewNode targetNode = TreeNode();
-            // Make sure children nodes have been created if children exist
-            if (targetNode.Children().Size() == 0 && MenuItems().Size() != 0)
-            {
-                winrt::get_self<TreeViewNode>(node)->ItemsSource(MenuItems());
-            }
-            auto isExpanded = !targetNode.IsExpanded();
-            targetNode.IsExpanded(isExpanded);
+            ToggleIsExpanded(node);
+            UpdateSelectionIndicatorVisiblity();
         }
         //else if (property == s_MenuItemsProperty)
         //{
@@ -208,6 +202,10 @@ void NavigationViewItem::OnPropertyChanged(const winrt::DependencyPropertyChange
             //{
             //    winrt::get_self<TreeViewNode>(node)->ItemsSource(value);
             //});
+        }
+        else if (property == s_IsChildSelectedProperty)
+        {
+            UpdateSelectionIndicatorVisiblity();
         }
     }
 }
@@ -420,5 +418,36 @@ void NavigationViewItem::OnLostFocus(winrt::RoutedEventArgs const& e)
     {
         m_hasKeyboardFocus = false;
         UpdateVisualStateNoTransition();
+    }
+}
+
+void NavigationViewItem::ToggleIsExpanded(winrt::TreeViewNode node)
+{
+    VerifyOrCreateChildrenNodes(node);
+    auto isExpanded = !node.IsExpanded();
+    node.IsExpanded(isExpanded);
+}
+
+// This function allows the TreeViewNode tree to be created dynamically in the
+// scenario where Navigation View is declared in markup
+void NavigationViewItem::VerifyOrCreateChildrenNodes(winrt::TreeViewNode node)
+{
+    // Make sure children nodes have been created if children exist
+    if (node.Children().Size() == 0 && MenuItems().Size() != 0)
+    {
+        winrt::get_self<TreeViewNode>(node)->ItemsSource(MenuItems());
+    }
+}
+
+void NavigationViewItem::UpdateSelectionIndicatorVisiblity()
+{
+    auto selectionIndicator = GetSelectionIndicator();
+    if (IsChildSelected() && !IsExpanded())
+    {
+        selectionIndicator.Opacity(1);
+    }
+    else
+    {
+        selectionIndicator.Opacity(0);
     }
 }

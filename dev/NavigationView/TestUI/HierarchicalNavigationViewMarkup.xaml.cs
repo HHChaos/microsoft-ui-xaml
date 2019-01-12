@@ -38,5 +38,30 @@ namespace MUXControlsTestApp
             //clickedItemContainer.Content = "I was clicked: " + test;
             test++;
         }
+
+        private void PrintSelectedItem(object sender, RoutedEventArgs e)
+        {
+            var selectedItem = navview.SelectedItem;
+            if (selectedItem != null)
+            {
+                var label = (String)((mux.NavigationViewItem)selectedItem).Content;
+                SelectedItemLabel.Text = label;
+            }
+        }
+
+        private void CollapseSelectedItem(object sender, RoutedEventArgs e)
+        {
+            var selectedItem = navview.SelectedItem;
+            if(selectedItem != null)
+            {
+                var container = (mux.NavigationViewItem)navview.ContainerFromMenuItem(selectedItem);
+                container.IsExpanded = false;
+            }
+        }
+
+        private void RemoveSecondMenuItem(object sender, RoutedEventArgs e)
+        {
+            navview.MenuItems.RemoveAt(1);
+        }
     }
 }

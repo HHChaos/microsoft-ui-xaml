@@ -165,3 +165,8 @@ winrt::TreeViewNode NavigationViewList::NodeFromContainer(winrt::DependencyObjec
     }
     return nullptr;
 }
+
+winrt::DependencyObject NavigationViewList::ContainerFromNode(winrt::TreeViewNode const& node)
+{
+    return ContainerFromItem(node.Content());
+}
