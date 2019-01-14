@@ -4,6 +4,7 @@
 #include "pch.h"
 #include "AnimatedVisualPlayer.h"
 #include "AnimatedVisualPlayerAutomationPeer.h"
+#include "RuntimeProfiler.h"
 #include "SharedHelpers.h"
 #include <synchapi.h>
 #include <winerror.h>
@@ -252,6 +253,8 @@ void AnimatedVisualPlayer::AnimationPlay::Complete()
 
 AnimatedVisualPlayer::AnimatedVisualPlayer()
 {
+    __RP_Marker_ClassById(RuntimeProfiler::ProfId_AnimatedVisualPlayer);
+
     EnsureProperties();
 
     auto compositor = winrt::ElementCompositionPreview::GetElementVisual(*this).Compositor();
@@ -971,4 +974,3 @@ void AnimatedVisualPlayer::OnStretchPropertyChanged(
 {
     winrt::get_self<AnimatedVisualPlayer>(sender.as<winrt::AnimatedVisualPlayer>())->InvalidateMeasure();
 }
-

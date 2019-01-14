@@ -52,6 +52,9 @@ namespace CustomTasks
             IncludedTypesMetadata["AnimatedVisualPlayer"] = true;
             // AnimatedVisualPlayer -- NeedsPropChangedCallbackMetadata
             // AnimatedVisualPlayer -- DefaultValueMetadata
+            DefaultValueMetadata["AnimatedVisualPlayer.AutoPlay"] = @"true";
+            DefaultValueMetadata["AnimatedVisualPlayer.PlaybackRate"] = @"1";
+            DefaultValueMetadata["AnimatedVisualPlayer.Stretch"] = @"winrt::Stretch::Uniform";
 
             IncludedTypesMetadata["BitmapIconSource"] = true;
             // BitmapIconSource -- NeedsPropChangedCallbackMetadata

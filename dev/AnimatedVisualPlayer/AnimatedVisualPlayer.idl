@@ -1,4 +1,4 @@
-﻿[WUXC_VERSION_INTERNAL]
+﻿[WUXC_VERSION_MUXONLY]
 [webhosthidden]
 interface IAnimatedVisual
     requires Windows.Foundation.IClosable
@@ -8,7 +8,7 @@ interface IAnimatedVisual
     Windows.Foundation.TimeSpan Duration{ get; };
 };
 
-[WUXC_VERSION_INTERNAL]
+[WUXC_VERSION_MUXONLY]
 [webhosthidden]
 interface IAnimatedVisualSource
 {
@@ -17,7 +17,7 @@ interface IAnimatedVisualSource
         out Object diagnostics);
 };
 
-[WUXC_VERSION_INTERNAL]
+[WUXC_VERSION_MUXONLY]
 [webhosthidden]
 interface IDynamicAnimatedVisualSource
     requires IAnimatedVisualSource
@@ -40,7 +40,7 @@ interface ISelfPlayingAnimatedVisual
     void SetSize(Windows.Foundation.Size size);
 };
 
-[WUXC_VERSION_INTERNAL]
+[WUXC_VERSION_MUXONLY]
 [webhosthidden]
 [contentproperty("Source")]
 unsealed runtimeclass AnimatedVisualPlayer 
@@ -54,13 +54,16 @@ unsealed runtimeclass AnimatedVisualPlayer
     IAnimatedVisualSource Source;
     Windows.UI.Xaml.DataTemplate FallbackContent;
 
+    [MUX_DEFAULT_VALUE("true")]
     Boolean AutoPlay;
     Boolean IsAnimatedVisualLoaded{ get; };
     Boolean IsPlaying{ get; };
+    [MUX_DEFAULT_VALUE("1")]
     Double PlaybackRate;
 
     Windows.UI.Composition.CompositionObject ProgressObject{ get; };
 
+    [MUX_DEFAULT_VALUE("winrt::Stretch::Uniform")]
     Windows.UI.Xaml.Media.Stretch Stretch;
 
     void Pause();

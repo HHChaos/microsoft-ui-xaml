@@ -33,7 +33,7 @@ void AnimatedVisualPlayerProperties::EnsureProperties()
                 winrt::name_of<bool>(),
                 winrt::name_of<winrt::AnimatedVisualPlayer>(),
                 false /* isAttached */,
-                ValueHelper<bool>::BoxedDefaultValue(),
+                ValueHelper<bool>::BoxValueIfNecessary(true),
                 nullptr);
     }
     if (!s_DiagnosticsProperty)
@@ -99,7 +99,7 @@ void AnimatedVisualPlayerProperties::EnsureProperties()
                 winrt::name_of<double>(),
                 winrt::name_of<winrt::AnimatedVisualPlayer>(),
                 false /* isAttached */,
-                ValueHelper<double>::BoxedDefaultValue(),
+                ValueHelper<double>::BoxValueIfNecessary(1),
                 nullptr);
     }
     if (!s_SourceProperty)
@@ -121,7 +121,7 @@ void AnimatedVisualPlayerProperties::EnsureProperties()
                 winrt::name_of<winrt::Stretch>(),
                 winrt::name_of<winrt::AnimatedVisualPlayer>(),
                 false /* isAttached */,
-                ValueHelper<winrt::Stretch>::BoxedDefaultValue(),
+                ValueHelper<winrt::Stretch>::BoxValueIfNecessary(winrt::Stretch::Uniform),
                 nullptr);
     }
 }
