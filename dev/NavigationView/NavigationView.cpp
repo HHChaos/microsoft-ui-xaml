@@ -3232,23 +3232,8 @@ void NavigationView::SyncRootNodesWithItemsSource(const winrt::IInspectable& ite
 {
     // All TreeViewNode should be set to 'IsContentMode = true' as we dont want to pass node objects to the list view
     winrt::get_self<TreeViewNode>(m_rootNode.get())->IsContentMode(true);
+    winrt::get_self<TreeViewNode>(m_rootNode.get())->ItemsSource(items);
 
-    auto children = winrt::get_self<TreeViewNodeVector>(RootNodes());
-    children->ClearCore();
-
-    auto itemDataSource = winrt::ItemsSourceView(items);
-    if (itemDataSource)
-    {
-        int size = itemDataSource.Count();
-        for (int i = 0; i < size; i++)
-        {
-            auto item = itemDataSource.GetAt(i);
-            auto node = winrt::make_self<TreeViewNode>();
-            node->IsContentMode(true);
-            node->Content(item);
-            children->AppendCore(*node);
-        }
-    }
 }
 
 void NavigationView::UpdateListViewItemsSource(const winrt::ListView& listView, 

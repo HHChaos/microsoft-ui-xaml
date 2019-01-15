@@ -179,24 +179,10 @@ void NavigationViewItem::OnPropertyChanged(const winrt::DependencyPropertyChange
             ToggleIsExpanded(node);
             UpdateSelectionIndicatorVisiblity();
         }
-        //else if (property == s_MenuItemsProperty)
-        //{
-        //    winrt::IInspectable value = args.NewValue();
-
-        //    // MenuItems change happens during measuring.
-        //    // Adding MenuItems to node's children triggers another layout change, so it has to be done async.
-        //    m_dispatcherHelper.RunAsync(
-        //        [node, value]()
-        //    {
-        //        winrt::get_self<TreeViewNode>(node)->ItemsSource(value);
-        //    });
-        //}
         else if (property == s_MenuItemsSourceProperty)
         {
             winrt::IInspectable value = args.NewValue();
             winrt::get_self<TreeViewNode>(node)->ItemsSource(value);
-            // MenuItemsSource change happens during measuring.
-            // Adding MenuItemsSource to node's children triggers another layout change, so it has to be done async.
             //m_dispatcherHelper.RunAsync(
             //    [node, value]()
             //{

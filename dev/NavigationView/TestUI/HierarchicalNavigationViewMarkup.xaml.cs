@@ -61,7 +61,17 @@ namespace MUXControlsTestApp
 
         private void RemoveSecondMenuItem(object sender, RoutedEventArgs e)
         {
+            //var item = (mux.NavigationViewItem)navview.MenuItems[0];
+            //var menuitemscount = item.MenuItems.Count;
+            //var item2 = (mux.NavigationViewItem)item.MenuItems[0];
+            //var menuitemscount1 = item2.MenuItems.Count;
+            //item2.MenuItems.RemoveAt(0);
+            //var menuitemscount2 = item2.MenuItems.Count;
+            //var menuitemscount3 = item2.MenuItems.Count;
+            var count = navview.MenuItems.Count;
             navview.MenuItems.RemoveAt(1);
+            var count1 = navview.MenuItems.Count;
+            var count2 = navview.MenuItems.Count;
         }
     }
 }

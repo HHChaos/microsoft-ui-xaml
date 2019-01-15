@@ -30,11 +30,14 @@ namespace MUXControlsTestApp
         public String Icon { get; set; }
         public ObservableCollection<Category> Children { get; set; }
 
-        public Category(String name, String icon, ObservableCollection<Category> children)
+        public bool IsLeaf { get; set; }
+
+        public Category(String name, String icon, ObservableCollection<Category> children, bool isLeaf)
         {
             this.Name = name;
             this.Icon = icon;
             this.Children = children;
+            this.IsLeaf = isLeaf;
         }
     }
 
@@ -49,15 +52,15 @@ namespace MUXControlsTestApp
             this.InitializeComponent();
 
             var categories3 = new ObservableCollection<Category>();
-            categories3.Add(new Category("Menu Item C", "Icon", null));
-            categories3.Add(new Category("Menu Item D", "Icon", null));
+            categories3.Add(new Category("Menu Item C", "Icon", null, true));
+            categories3.Add(new Category("Menu Item D", "Icon", null, true));
 
             var categories2 = new ObservableCollection<Category>();
-            categories2.Add(new Category("Menu Item B", "Icon", categories3));
+            categories2.Add(new Category("Menu Item B", "Icon", categories3, false));
 
-            categories.Add(new Category("Menu Item A", "Icon", categories2));
-            categories.Add(new Category("Menu Item E", "Icon", null));
-            categories.Add(new Category("Menu Item F", "Icon", null));
+            categories.Add(new Category("Menu Item A", "Icon", categories2, false));
+            categories.Add(new Category("Menu Item E", "Icon", null, true));
+            categories.Add(new Category("Menu Item F", "Icon", null, true));
 
         }
 
@@ -81,7 +84,7 @@ namespace MUXControlsTestApp
 
         private void AddMenuItem(object sender, RoutedEventArgs e)
         {
-            categories.Add(new Category("Menu Item G", "Icon", null));
+            categories.Add(new Category("Menu Item G", "Icon", null, true));
         }
 
         private void RemoveSecondMenuItem(object sender, RoutedEventArgs e)
