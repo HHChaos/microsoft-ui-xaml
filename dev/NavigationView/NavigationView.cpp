@@ -1284,6 +1284,12 @@ void NavigationView::ChangeSelection(const winrt::IInspectable& prevItem, const 
             // Undo only happened when customer clicked a selectionsuppressed item. 
             // To simplify the logic, OnItemClick didn't raise the event and it's been delayed to here.
             RaiseItemInvoked(nextActualItem, isSettingsItem);
+
+            auto container = NavigationViewItemOrSettingsContentFromData(nextActualItem);
+            if (container)
+            {
+                ToggleIsExpanded(container);
+            }
         }
         else
         {
@@ -1339,6 +1345,14 @@ void NavigationView::ChangeSelection(const winrt::IInspectable& prevItem, const 
                 RaiseSelectionChangedEvent(nextActualItem, isSettingsItem, recommendedDirection);
             }
 
+            UpdateIsChildSelectedForItem(nextActualItem, true);
+            UpdateIsChildSelectedForItem(prevItem, false);
+            auto container = NavigationViewItemOrSettingsContentFromData(nextActualItem);
+            if (container)
+            {
+                ToggleIsExpanded(container);
+            }
+
             AnimateSelectionChanged(prevItem, nextActualItem);
 
             if (IsPaneOpen() && DisplayMode() != winrt::NavigationViewDisplayMode::Expanded)
@@ -1347,12 +1361,19 @@ void NavigationView::ChangeSelection(const winrt::IInspectable& prevItem, const 
             }
         }
     }
-    else
+}
+
+void NavigationView::UpdateIsChildSelectedForItem(const winrt::IInspectable& item, bool isChildSelected)
+{
+    // Update the 'IsChildSelected' property of all parents
+    if (auto container = ContainerFromMenuItem(item))
     {
-        auto testitem = m_leftNavListView.get().SelectedItem();
-        auto testindex = m_leftNavListView.get().SelectedIndex();
-        auto i = 0;
-        i++;
+        auto node = NodeFromContainer(container);
+        while (auto nodeParent = node.Parent())
+        {
+            ChangeIsChildSelectedForNode(nodeParent, isChildSelected);
+            node = nodeParent;
+        }
     }
 }
 
@@ -1366,43 +1387,17 @@ void NavigationView::OnItemClick(const winrt::IInspectable& /*sender*/, const wi
     auto selectedItem = SelectedItem();
 
     // TODO: There is bug in the above method of retrieving an item container when using databinding.
-    //       For now, retrieving container by bypass the buggy method.
+    //       For now, retrieving container by bypassing the buggy method.
     // Explanation:
     //      The container retrieval workaround in 'GetContainerForClickedItem' does not work in a
     //      databinding scenario. 'NavigationViewItemBaseOrSettingsContentFromData' doesn't work
     //      in this function in a markup scenario. So we first try the ListView API to retrieve
     //      a container and if that fails, we use the workaround.
-    auto itemContainerForExpanding = NavigationViewItemBaseOrSettingsContentFromData(clickedItem);
-    if (!itemContainerForExpanding)
-    {
-        itemContainerForExpanding = itemContainer;
-    }
-    // We want to expand/collapse items with children regardless of selection logic.
-    // In order to determine if the item has children, we need access to the item's container.
-    if (itemContainerForExpanding)
-    {
-        if (auto clickedItemContainer = itemContainerForExpanding.try_as<winrt::NavigationViewItem>())
-        {
-            bool hasChildren = (clickedItemContainer.MenuItems().Size() > 0 ||
-                                clickedItemContainer.MenuItemsSource() ||
-                                clickedItemContainer.HasUnrealizedChildren());
-            if (hasChildren)
-            {
-                auto isItemBeingExpanded = !clickedItemContainer.IsExpanded();
-                if (isItemBeingExpanded)
-                {
-                    RaiseIsExpanding(clickedItemContainer);
-                }
-                
-                clickedItemContainer.IsExpanded(isItemBeingExpanded);
-
-                if (!isItemBeingExpanded)
-                {
-                    RaiseCollapsed(clickedItemContainer);
-                }
-            }
-        }
-    }
+    //auto itemContainerForExpanding = NavigationViewItemBaseOrSettingsContentFromData(clickedItem);
+    //if (!itemContainerForExpanding)
+    //{
+    //    itemContainerForExpanding = itemContainer;
+    //}
 
     // If SelectsOnInvoked and previous item(selected item) == new item(clicked item), raise OnItemClicked (same item would not have selectchange event)
     // Others would be invoked by SelectionChanged. Please see ChangeSelection for more details.
@@ -1414,6 +1409,35 @@ void NavigationView::OnItemClick(const winrt::IInspectable& /*sender*/, const wi
     {
         auto containterContent = itemContainer.Content();
         RaiseItemInvoked(selectedItem, false /*isSettings*/, itemContainer);
+        if (auto nviExpanding = itemContainer.try_as<winrt::NavigationViewItem>())
+        {
+            ToggleIsExpanded(nviExpanding);
+        }
+    }
+}
+
+void NavigationView::ToggleIsExpanded(winrt::NavigationViewItem const& item)
+{
+    if (item)
+    {
+        bool hasChildren = (item.MenuItems().Size() > 0 ||
+                            item.MenuItemsSource() ||
+                            item.HasUnrealizedChildren());
+        if (hasChildren)
+        {
+            auto isItemBeingExpanded = !item.IsExpanded();
+            if (isItemBeingExpanded)
+            {
+                RaiseIsExpanding(item);
+            }
+
+            item.IsExpanded(isItemBeingExpanded);
+
+            if (!isItemBeingExpanded)
+            {
+                RaiseCollapsed(item);
+            }
+        }
     }
 }
 
@@ -1881,17 +1905,6 @@ winrt::NavigationViewItemBase NavigationView::GetContainerForClickedItem(winrt::
         container = listView.ContainerFromItem(itemData).try_as<winrt::NavigationViewItemBase>();
     }
 
-    if (auto navListView = listView.try_as<winrt::NavigationViewList>())
-    {
-        auto index = navListView.IndexFromContainer(container);
-        if (container.Content() != itemData)
-        {
-            auto containerContent = container.Content();
-            int j = 0;
-            j++;
-        }
-    }
-
     MUX_ASSERT(container);
     return container;
 }
@@ -2014,14 +2027,6 @@ void NavigationView::ChangeSelectStatusForItem(winrt::IInspectable const& item, 
         // Instead we remove IsSelected from the item itself, and it make ListView to unselect it.
         // If we select an item, we follow the unselect to simplify the code.
         container.IsSelected(selected);
-
-        // Update the 'IsChildSelected' property of all parents
-        //auto node = NodeFromContainer(container);
-        //while (auto nodeParent = node.Parent())
-        //{
-        //    ChangeIsChildSelectedForNode(nodeParent, selected);
-        //    node = nodeParent;
-        //}
     }
  }
 

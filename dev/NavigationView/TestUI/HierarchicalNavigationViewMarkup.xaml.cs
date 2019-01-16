@@ -69,7 +69,7 @@ namespace MUXControlsTestApp
             //var menuitemscount2 = item2.MenuItems.Count;
             //var menuitemscount3 = item2.MenuItems.Count;
             var count = navview.MenuItems.Count;
-            navview.MenuItems.RemoveAt(1);
+            navview.MenuItems.RemoveAt(2);
             var count1 = navview.MenuItems.Count;
             var count2 = navview.MenuItems.Count;
         }

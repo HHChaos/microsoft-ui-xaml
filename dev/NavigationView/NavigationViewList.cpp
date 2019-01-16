@@ -44,23 +44,26 @@ void NavigationViewList::ClearContainerForItemOverride(winrt::DependencyObject c
         auto itemContainerImplementation = winrt::get_self<NavigationViewItem>(itemContainer);
         itemContainerImplementation->ClearIsContentChangeHandlingDelayedForTopNavFlag();
         itemContainerImplementation->SetDepth(0);
+        itemContainerImplementation->IsChildSelected(false);
     }
     __super::PrepareContainerForItemOverride(element, item);
 }
 
 void NavigationViewList::PrepareContainerForItemOverride(winrt::DependencyObject const& element, winrt::IInspectable const& item)
 {
+    auto nvNode = winrt::get_self<TreeViewNode>(NodeFromContainer(element));
     if (auto itemContainer = element.try_as<winrt::NavigationViewItemBase>())
     {
         winrt::get_self<NavigationViewItemBase>(itemContainer)->Position(m_navigationViewListPosition);
         
-        auto nvNode = NodeFromContainer(itemContainer);
-        winrt::get_self<NavigationViewItemBase>(itemContainer)->SetDepth(nvNode.Depth());
+        winrt::get_self<NavigationViewItemBase>(itemContainer)->SetDepth(nvNode->Depth());
     }
     if (auto itemContainer = element.try_as<winrt::NavigationViewItem>())
     {
         itemContainer.UseSystemFocusVisuals(m_showFocusVisual);
         winrt::get_self<NavigationViewItem>(itemContainer)->ClearIsContentChangeHandlingDelayedForTopNavFlag();
+
+        winrt::get_self<NavigationViewItem>(itemContainer)->IsChildSelected(nvNode->IsChildSelected());
     }
     __super::PrepareContainerForItemOverride(element, item);
 }
